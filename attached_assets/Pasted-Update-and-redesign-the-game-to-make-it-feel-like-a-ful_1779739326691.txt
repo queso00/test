@@ -1,0 +1,86 @@
+Update and redesign the game to make it feel like a full 3D pirate adventure survival game instead of a limited 2D builder. Remove the current 2D construction limitation of 4 blocks high and 6 blocks long. Replace it with a large open 3D building area where players have complete freedom to build boats of any size and shape they want. Allow vertical building, multiple floors, towers, defense systems, sails, engines, and creative ship designs. Add camera rotation, zoom controls, and smooth drag-and-place building mechanics optimized for mobile devices.
+
+The player character should now be a full 3D pirate character with stylized pirate clothes, hat, beard options, pirate animations, and customizable cosmetics. The pirate should be visible on the boat during navigation and react to impacts, explosions, and waves.
+
+Add a complete progression system:
+
+* Player levels from 1 to 50.
+* Every level gives rewards such as coins, rare materials, cosmetics, stronger blocks, or special items.
+* XP is earned by traveling farther, surviving longer, defeating enemies, and reaching checkpoints.
+* Add a progression bar and level-up animations.
+
+Create a shop menu UI:
+
+* Show total coins clearly at the top of the screen.
+* Include categories for materials, weapons, engines, cosmetics, special blocks, shields, and decorations.
+* Materials should have different durability, weight, and resistance.
+* Include rarities like Common, Rare, Epic, and Legendary.
+* Add unlock progression so stronger materials require higher player levels.
+
+Navigation scene improvements:
+
+* Add a pirate-style treasure map UI visible during gameplay.
+* The map should show the player’s current position and progress toward the final treasure marked with a large red “X”.
+* The map should visually update as the player advances.
+* Make the UI look like an old pirate parchment with animated waves and icons.
+
+World and biome system:
+Create multiple different themed regions that players travel through. Each biome should have unique visuals, enemies, obstacles, weather, and hazards.
+
+Biomes:
+
+1. Tropical Beginner Sea
+
+* Calm ocean, small rocks, wooden debris, pirate rafts.
+* Weak enemies and simple obstacles.
+
+2. Swamp Waters
+
+* Foggy green swamp, dead trees, toxic water pools, crocodile enemies, giant mosquitoes.
+* Sticky mud currents slow boats.
+
+3. Frozen Ocean
+
+* Icebergs, snowstorms, freezing winds, giant ice spikes, frozen pirate skeletons.
+* Ice can damage or trap boats.
+
+4. Lava Sea
+
+* Volcanoes, lava waves, fire geysers, burning rocks, fire pirate enemies.
+* Heat gradually damages weak materials.
+
+5. Storm Ocean
+
+* Massive waves, lightning strikes, tornadoes, whirlpools, ghost ships.
+* Visibility becomes low during storms.
+
+6. Dark Abyss Sea
+
+* Dark nighttime ocean with glowing creatures, sea monsters, cursed ruins, giant tentacles.
+* Psychological horror atmosphere with dangerous enemies.
+
+Final Area:
+7. Kraken’s Domain
+
+* The final biome before the treasure.
+* Giant storm in the center of the ocean.
+* The Kraken appears as the final boss with huge animated tentacles that attack and destroy parts of the player’s ship dynamically.
+* The Kraken should have multiple attack phases and cinematic moments.
+
+Procedural gameplay:
+
+* Obstacles, enemy spawns, traps, currents, and events should always be randomly generated.
+* No two runs should ever feel exactly the same.
+* Random encounters can include pirate ambushes, treasure events, giant waves, sea monsters, abandoned ships, and hidden shortcuts.
+* Add replayability through randomness and progression.
+
+Extra gameplay systems:
+
+* Add cannons and harpoons to defend the boat.
+* Add multiplayer co-op where players can build ships together.
+* Allow saving and loading custom ship designs.
+* Add destruction physics where every block can break individually.
+* Add water buoyancy simulation and realistic floating behavior.
+* Include soundtracks inspired by pirate adventures and dangerous oceans.
+
+The game should feel like a mix of survival, creativity, exploration, progression, and chaotic physics-based fun, with a strong pirate adventure atmosphere and endless replayability.

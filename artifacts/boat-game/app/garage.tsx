@@ -17,7 +17,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { BLOCK_DEFS, GRID_COLS, GRID_ROWS, type BlockType } from '@/constants/blocks';
 import { type SavedDesign, useGame } from '@/contexts/GameContext';
 
-const MINI_SIZE = 22;
+const MINI_SIZE = 16;
 
 function MiniBoat({ grid }: { grid: (BlockType | null)[][] }) {
   return (
