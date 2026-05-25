@@ -4,7 +4,7 @@ import React, { createContext, useCallback, useContext, useEffect, useState } fr
 import type { BlockType } from '@/constants/blocks';
 import { getLevelFromXp, getLevelReward, MAX_LEVEL, xpForRun } from '@/constants/progression';
 
-const STORAGE_KEY = 'boat_game_v2';
+const STORAGE_KEY = 'boat_game_v3';
 
 export interface SavedDesign {
   id: string;
@@ -13,10 +13,13 @@ export interface SavedDesign {
   createdAt: number;
 }
 
+export type BlockInventory = Partial<Record<BlockType, number>>;
+
 interface GameState {
   coins: number;
   totalXp: number;
   unlockedBlocks: BlockType[];
+  blockInventory: BlockInventory;
   bestDistance: number;
   savedDesigns: SavedDesign[];
   totalRuns: number;
@@ -28,16 +31,25 @@ interface GameContextValue extends GameState {
   xpNeeded: number;
   addCoins: (amount: number) => void;
   unlockBlock: (type: BlockType, cost: number) => boolean;
+  placeBlock: (type: BlockType) => boolean;
+  returnBlock: (type: BlockType) => void;
+  buyBlockPack: (type: BlockType, qty: number, cost: number) => boolean;
   updateBestDistance: (distance: number) => void;
   saveDesign: (name: string, grid: (BlockType | null)[][]) => void;
   deleteDesign: (id: string) => void;
-  finishRun: (distance: number, survivingBlocks: number) => { coinsEarned: number; xpEarned: number; leveledUp: boolean; newLevel: number; levelReward: string };
+  finishRun: (
+    distance: number,
+    survivingBlocks: number
+  ) => { coinsEarned: number; xpEarned: number; leveledUp: boolean; newLevel: number; levelReward: string };
 }
 
+const DEFAULT_INVENTORY: BlockInventory = { wood: 20 };
+
 const DEFAULT_STATE: GameState = {
-  coins: 150,
+  coins: 200,
   totalXp: 0,
   unlockedBlocks: ['wood'],
+  blockInventory: DEFAULT_INVENTORY,
   bestDistance: 0,
   savedDesigns: [],
   totalRuns: 0,
@@ -79,6 +91,51 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
           ...prev,
           coins: prev.coins - cost,
           unlockedBlocks: [...prev.unlockedBlocks, type],
+        };
+      }
+      return prev;
+    });
+    return success;
+  }, []);
+
+  const placeBlock = useCallback((type: BlockType): boolean => {
+    let success = false;
+    setState((prev) => {
+      const current = prev.blockInventory[type] ?? 0;
+      if (current > 0) {
+        success = true;
+        return {
+          ...prev,
+          blockInventory: { ...prev.blockInventory, [type]: current - 1 },
+        };
+      }
+      return prev;
+    });
+    return success;
+  }, []);
+
+  const returnBlock = useCallback((type: BlockType) => {
+    setState((prev) => ({
+      ...prev,
+      blockInventory: {
+        ...prev.blockInventory,
+        [type]: (prev.blockInventory[type] ?? 0) + 1,
+      },
+    }));
+  }, []);
+
+  const buyBlockPack = useCallback((type: BlockType, qty: number, cost: number): boolean => {
+    let success = false;
+    setState((prev) => {
+      if (prev.coins >= cost) {
+        success = true;
+        return {
+          ...prev,
+          coins: prev.coins - cost,
+          blockInventory: {
+            ...prev.blockInventory,
+            [type]: (prev.blockInventory[type] ?? 0) + qty,
+          },
         };
       }
       return prev;
@@ -128,12 +185,18 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
           newLevel = level;
           const reward = getLevelReward(level);
           levelReward = reward.message;
+          // Give bonus wood pack on level up
+          const bonusWood = Math.floor(level / 2) + 5;
           return {
             ...prev,
             coins: prev.coins + coinsEarned + (reward.coins ?? 0),
             totalXp: newXp,
             totalRuns: prev.totalRuns + 1,
             bestDistance: Math.max(prev.bestDistance, Math.floor(distance)),
+            blockInventory: {
+              ...prev.blockInventory,
+              wood: (prev.blockInventory.wood ?? 0) + bonusWood,
+            },
           };
         }
         return {
@@ -163,6 +226,9 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
         xpNeeded,
         addCoins,
         unlockBlock,
+        placeBlock,
+        returnBlock,
+        buyBlockPack,
         updateBestDistance,
         saveDesign,
         deleteDesign,

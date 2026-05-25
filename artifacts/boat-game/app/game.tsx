@@ -218,6 +218,168 @@ function LevelUpModal({ level, onClose }: { level: number; onClose: () => void }
 }
 
 const STRIPE_H = 240;
+const PIRATE_X = BOAT_LEFT + BOAT_W / 2;
+const PIRATE_Y = BOAT_TOP - 4;
+
+function PirateCharacter({
+  triggerHitRef,
+  isAlive,
+}: {
+  triggerHitRef: React.MutableRefObject<(() => void) | null>;
+  isAlive: boolean;
+}) {
+  const floatAnim = useRef(new Animated.Value(0)).current;
+  const shakeAnim = useRef(new Animated.Value(0)).current;
+  const scaleAnim = useRef(new Animated.Value(1)).current;
+  const floopRef = useRef<Animated.CompositeAnimation | null>(null);
+
+  useEffect(() => {
+    const loop = Animated.loop(
+      Animated.sequence([
+        Animated.timing(floatAnim, { toValue: -6, duration: 900, useNativeDriver: true }),
+        Animated.timing(floatAnim, { toValue: 0, duration: 900, useNativeDriver: true }),
+      ])
+    );
+    floopRef.current = loop;
+    loop.start();
+    return () => loop.stop();
+  }, []);
+
+  useEffect(() => {
+    triggerHitRef.current = () => {
+      Animated.sequence([
+        Animated.timing(shakeAnim, { toValue: -10, duration: 55, useNativeDriver: true }),
+        Animated.timing(shakeAnim, { toValue: 10, duration: 55, useNativeDriver: true }),
+        Animated.timing(shakeAnim, { toValue: -6, duration: 45, useNativeDriver: true }),
+        Animated.timing(shakeAnim, { toValue: 0, duration: 45, useNativeDriver: true }),
+        Animated.timing(scaleAnim, { toValue: 1.4, duration: 70, useNativeDriver: true }),
+        Animated.spring(scaleAnim, { toValue: 1, useNativeDriver: true, tension: 180 }),
+      ]).start();
+    };
+  }, []);
+
+  const shadowOpacity = floatAnim.interpolate({ inputRange: [-6, 0], outputRange: [0.1, 0.35] });
+
+  return (
+    <Animated.View
+      style={{
+        position: 'absolute',
+        left: PIRATE_X - 22,
+        top: PIRATE_Y - 52,
+        alignItems: 'center',
+        zIndex: 6,
+        transform: [{ translateY: floatAnim }, { translateX: shakeAnim }, { scale: scaleAnim }],
+      }}
+    >
+      <Text style={{ fontSize: 30 }}>{isAlive ? '🏴‍☠️' : '💀'}</Text>
+      <Animated.View
+        style={{
+          width: 28,
+          height: 5,
+          backgroundColor: '#000',
+          borderRadius: 14,
+          marginTop: -2,
+          opacity: shadowOpacity,
+        }}
+      />
+    </Animated.View>
+  );
+}
+
+function CornerMinimap({
+  distance,
+  biome,
+  onExpand,
+  bottom,
+}: {
+  distance: number;
+  biome: BiomeDef;
+  onExpand: () => void;
+  bottom: number;
+}) {
+  const currentIdx = BIOMES.findIndex((b) => b.id === biome.id);
+  const pulseAnim = useRef(new Animated.Value(1)).current;
+
+  useEffect(() => {
+    const loop = Animated.loop(
+      Animated.sequence([
+        Animated.timing(pulseAnim, { toValue: 1.35, duration: 700, useNativeDriver: true }),
+        Animated.timing(pulseAnim, { toValue: 1, duration: 700, useNativeDriver: true }),
+      ])
+    );
+    loop.start();
+    return () => loop.stop();
+  }, []);
+
+  const nextBiome = BIOMES[currentIdx + 1];
+  const progressPct = nextBiome
+    ? Math.min(100, Math.floor(((distance - biome.startDistance) / (nextBiome.startDistance - biome.startDistance)) * 100))
+    : 100;
+
+  return (
+    <Pressable onPress={onExpand} style={[styles.minimapWrap, { bottom }]}>
+      <LinearGradient
+        colors={['#C4933A', '#D9A84B', '#B5782A']}
+        style={styles.minimapCard}
+      >
+        {/* Aged paper texture overlay */}
+        <View style={styles.minimapTexture} />
+
+        <Text style={styles.minimapTitle}>⚓ CHART</Text>
+
+        {/* Biome path */}
+        <View style={styles.minimapPath}>
+          {BIOMES.map((b, idx) => {
+            const isPast = idx < currentIdx;
+            const isCurrent = idx === currentIdx;
+            return (
+              <View key={b.id} style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <Animated.View
+                  style={[
+                    styles.minimapDot,
+                    {
+                      backgroundColor: isPast ? b.mapColor : isCurrent ? '#FFF' : '#5C3310',
+                      borderColor: isCurrent ? '#FFF' : b.mapColor,
+                      transform: isCurrent ? [{ scale: pulseAnim }] : [],
+                    },
+                  ]}
+                >
+                  {isCurrent && <Text style={{ fontSize: 7 }}>⛵</Text>}
+                  {isPast && <Text style={{ fontSize: 6 }}>✓</Text>}
+                </Animated.View>
+                {idx < BIOMES.length - 1 && (
+                  <View
+                    style={[
+                      styles.minimapLine,
+                      { backgroundColor: isPast ? '#8B5E1E' : '#4A2E0A' },
+                    ]}
+                  />
+                )}
+              </View>
+            );
+          })}
+          {/* Treasure */}
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <View style={styles.minimapLine} />
+            <View style={[styles.minimapDot, { backgroundColor: '#F59E0B', borderColor: '#D97706' }]}>
+              <Text style={{ fontSize: 7, color: '#7C2D12', fontFamily: 'Inter_700Bold' }}>X</Text>
+            </View>
+          </View>
+        </View>
+
+        {/* Biome progress bar */}
+        <View style={styles.minimapProgTrack}>
+          <View style={[styles.minimapProgFill, { width: `${progressPct}%`, backgroundColor: biome.mapColor }]} />
+        </View>
+
+        <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+          <Text style={styles.minimapDist}>{Math.floor(distance)}m</Text>
+          <Text style={styles.minimapTapHint}>tap ›</Text>
+        </View>
+      </LinearGradient>
+    </Pressable>
+  );
+}
 
 function BiomeBackground({ biome, scrollAnim }: { biome: BiomeDef; scrollAnim: Animated.Value }) {
   return (
@@ -278,6 +440,8 @@ export default function GameScreen() {
   const gameOverRef = useRef(false);
   const runStartedRef = useRef(false);
   const prevBiomeIdRef = useRef('tropical');
+  const pirateHitTrigger = useRef<(() => void) | null>(null);
+  const [pirateAlive, setPirateAlive] = useState(true);
 
   const scrollAnim = useRef(new Animated.Value(0)).current;
   const scrollAnimRef = useRef<Animated.CompositeAnimation | null>(null);
@@ -332,6 +496,7 @@ export default function GameScreen() {
     const result = finishRun(dist, surviving);
     setRunResult({ coins: result.coinsEarned, xp: result.xpEarned, leveledUp: result.leveledUp, newLevel: result.newLevel });
     setGameOver(true);
+    setPirateAlive(false);
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
   }, [finishRun, countSurviving]);
 
@@ -404,8 +569,10 @@ export default function GameScreen() {
               if (block.hp <= 0) {
                 blocksRef.current[r][c] = null;
                 Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
+                pirateHitTrigger.current?.();
               } else {
                 Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                pirateHitTrigger.current?.();
               }
               hit = true;
             }
@@ -500,8 +667,21 @@ export default function GameScreen() {
         )}
       </View>
 
+      {/* Pirate character */}
+      <PirateCharacter triggerHitRef={pirateHitTrigger} isAlive={pirateAlive} />
+
       {/* Obstacles */}
       {obstaclesRef.current.map((obs) => <ObstacleView key={obs.id} obs={obs} />)}
+
+      {/* Corner minimap — always visible during sailing */}
+      {gameStarted && !gameOver && (
+        <CornerMinimap
+          distance={dist}
+          biome={currentBiome}
+          onExpand={() => setShowMap(true)}
+          bottom={botPad + 36}
+        />
+      )}
 
       {/* Speed bar */}
       {gameStarted && !gameOver && (
@@ -683,4 +863,15 @@ const styles = StyleSheet.create({
   levelUpMsg: { color: '#94A3B8', fontFamily: 'Inter_400Regular', fontSize: 13, textAlign: 'center' },
   levelUpBtn: { backgroundColor: '#4338CA', borderRadius: 12, paddingHorizontal: 28, paddingVertical: 14 },
   levelUpBtnTxt: { color: '#fff', fontFamily: 'Inter_700Bold', fontSize: 16, letterSpacing: 1 },
+  minimapWrap: { position: 'absolute', right: 12, zIndex: 15 },
+  minimapCard: { borderRadius: 11, padding: 2, borderWidth: 2, borderColor: '#7C4E18', shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.4, shadowRadius: 4, elevation: 6 },
+  minimapTexture: { position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, borderRadius: 9, backgroundColor: '#00000008' },
+  minimapTitle: { color: '#3D1A00', fontFamily: 'Inter_700Bold', fontSize: 8, letterSpacing: 1.5, textAlign: 'center', marginBottom: 3 },
+  minimapPath: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 4, paddingVertical: 2 },
+  minimapDot: { width: 17, height: 17, borderRadius: 9, alignItems: 'center', justifyContent: 'center', borderWidth: 1.5 },
+  minimapLine: { width: 8, height: 2, borderRadius: 1, backgroundColor: '#4A2E0A' },
+  minimapProgTrack: { height: 3, backgroundColor: '#5C3310', borderRadius: 2, marginHorizontal: 4, marginBottom: 3, overflow: 'hidden' },
+  minimapProgFill: { height: '100%', borderRadius: 2 },
+  minimapDist: { color: '#3D1A00', fontFamily: 'Inter_700Bold', fontSize: 9, paddingHorizontal: 4 },
+  minimapTapHint: { color: '#6B3A10', fontFamily: 'Inter_400Regular', fontSize: 8, paddingHorizontal: 4 },
 });

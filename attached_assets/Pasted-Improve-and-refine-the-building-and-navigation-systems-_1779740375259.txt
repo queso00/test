@@ -1,0 +1,61 @@
+Improve and refine the building and navigation systems to fully support a true 3D pirate sandbox experience.
+
+Construction Mode:
+
+* The building scene must be fully 3D, not 2D in any way.
+* Players must be able to freely walk around the construction area using their pirate character in third person.
+* Allow camera rotation, zoom, and movement around the ship while building.
+* Players must be able to place blocks on top of other blocks vertically and horizontally without artificial size restrictions.
+* Boats can have multiple floors, towers, cabins, sails, cannons, and creative shapes.
+* Add grid snapping for easier building but keep placement flexible.
+
+Block System:
+
+* Building resources must NOT be infinite.
+* Players begin the game with a small starter amount of basic wooden blocks.
+* New blocks, materials, and ship parts must be purchased using coins earned during runs.
+* Different block types should have different stats:
+
+  * Durability
+  * Weight
+  * Float resistance
+  * Fire resistance
+  * Cost
+* Include progression so advanced materials unlock later.
+* Add inventory limits and resource management to encourage strategic building.
+
+Pirate Character:
+
+* During gameplay and construction, the player should control a visible 3D pirate character.
+* The pirate stands and moves on the boat while sailing.
+* Add walking, idle, jumping, steering, and impact animations.
+* The pirate should react physically to waves, crashes, explosions, and attacks.
+* Allow cosmetic customization like hats, coats, hooks, beards, and pirate outfits.
+
+Pirate Map UI:
+
+* Add a minimap in the corner of the screen designed like an old pirate treasure map.
+* The minimap should look like aged parchment paper with hand-drawn islands, ocean markings, and pirate-style visuals.
+* Show the player boat icon moving across the map in real time.
+* Display the treasure destination with a large red “X”.
+* Include markers for dangerous zones, bosses, checkpoints, and biome changes.
+
+Expandable Map:
+
+* Players can tap the minimap to expand it into a large full-screen pirate navigation map.
+* The expanded version should show:
+
+  * Current location
+  * Remaining distance to treasure
+  * Biomes ahead
+  * Boss zones
+  * Checkpoints
+  * Possible alternate routes
+* Add animated compass visuals and pirate-themed UI elements.
+
+Gameplay Feel:
+
+* The game should emphasize creativity, progression, survival, exploration, and replayability.
+* Building should feel immersive and physical, almost like a sandbox pirate engineering game.
+* Sailing should feel dangerous and dynamic with unpredictable obstacles and enemy encounters.
+* Every run should feel different because obstacles and events are procedurally randomized.
