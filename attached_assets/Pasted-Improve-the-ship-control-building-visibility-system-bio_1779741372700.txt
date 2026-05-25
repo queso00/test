@@ -1,0 +1,71 @@
+Improve the ship control, building visibility system, biome pacing, progression balance, and navigation UI to make the gameplay smoother and less frustrating.
+
+Boat Controls:
+
+* The player must be able to actively control and steer the boat during navigation.
+* Add steering controls for left/right movement and optional acceleration.
+* Boats should react naturally to water physics, weight distribution, and damaged parts.
+* Add a ship wheel interaction animation for the pirate character.
+
+Building System Improvements:
+
+* The current Low / Mid / Upper boat layer system is confusing because players cannot properly see the blocks placed on other layers.
+* Add a transparent “ghost view” system:
+
+  * When editing Mid Boat, players should still see the Low Boat structure as semi-transparent.
+  * When editing Upper Boat, players should still see Mid and Low layers underneath as transparent references.
+* This prevents players from building blindly and helps align structures correctly.
+* Add an option to toggle transparency visibility on/off.
+* Add colored outlines for connected structures to make ship building easier.
+* Improve camera movement during construction so players can rotate around the entire ship smoothly.
+
+Biome Transition Improvements:
+
+* The game currently changes biomes too quickly.
+* Make biome transitions much slower and more immersive.
+* Each biome should feel like a long dangerous journey instead of a short scene.
+* Add gradual environmental transitions:
+
+  * Water color slowly changes.
+  * Weather changes over time.
+  * Skybox transitions smoothly.
+  * Music evolves naturally between regions.
+* Players should have enough time to experience each biome before entering another one.
+
+Navigation and Minimap Improvements:
+
+* Add a permanent minimap reference during gameplay that clearly shows:
+
+  * Current player location.
+  * Distance remaining to the final treasure.
+  * Current biome.
+  * Upcoming dangerous zones.
+* The minimap should use a pirate parchment art style.
+* Add a progress line/path across the map showing the journey route.
+* Include checkpoint markers and treasure indicators.
+* The minimap must update in real time as the ship moves.
+
+Gameplay Balance:
+
+* Increase overall block durability so boats survive longer and players feel more rewarded for building large ships.
+* Beginner materials should no longer break instantly after small collisions.
+* Early levels should contain:
+
+  * Fewer obstacles.
+  * Slower hazards.
+  * Simpler enemy encounters.
+  * More open sailing space.
+* Difficulty should gradually scale with progression.
+* Later levels can introduce denser obstacle generation, harder enemies, stronger storms, and more aggressive hazards.
+
+Obstacle Randomization:
+
+* Obstacles should remain procedurally generated so every run feels unique.
+* However, randomness should be balanced:
+
+  * Early levels = forgiving layouts.
+  * Mid levels = moderate chaos.
+  * Late levels = dangerous and unpredictable survival gameplay.
+
+Overall Goal:
+The game should feel less punishing in the beginning and more immersive overall, while keeping the long-term progression challenging and exciting. The player should feel attached to their ship design, understand the building process clearly, and enjoy the adventure across long evolving pirate-themed biomes.
