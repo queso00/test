@@ -1,0 +1,14 @@
+uploads = []
+outputs = []
+
+[[generated]]
+id = "2nncPaF-bd7NztgivEg4f"
+uri = "file://artifacts/boat-game/assets/images/icon.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "HeFA4vYZKI9aEDv6gyhgJ"
+uri = "file://artifacts/boat-game/assets/images/river_bg.png"
+type = "image"
+title = "generated_image"

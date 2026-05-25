@@ -1,0 +1,38 @@
+Create a mobile game inspired by the Roblox game “Build A Boat For Treasure”. The game should focus on building a customizable boat using different blocks and materials, then launching the boat into a dangerous river full of obstacles, traps, rocks, waterfalls, spinning objects, and destruction physics. The main objective is to survive as long as possible and eventually reach the end of the map to earn a large reward.
+
+Gameplay loop:
+
+* The player starts in a build area where they can place blocks freely to create their boat.
+* After building, the player presses a launch button to start sailing automatically down the river.
+* Obstacles damage and destroy parts of the boat realistically.
+* If the player reaches checkpoints or survives longer, they earn coins.
+* Coins can be used to unlock stronger and better materials such as wood, reinforced wood, metal, titanium, glass, balloons, engines, rockets, shields, and special blocks.
+* Each attempt should help the player progress further than before.
+* Include upgrades, progression, and a sense of experimentation.
+
+Style and visuals:
+
+* Colorful stylized 3D graphics similar to Roblox aesthetics but optimized for mobile.
+* Smooth physics-based destruction system.
+* Fun and satisfying building mechanics with drag-and-place controls.
+* Cartoon water, dynamic lighting, and simple but polished environments.
+
+Features:
+
+* Inventory system for materials and blocks.
+* Shop with unlockable items and upgrades.
+* Daily rewards and missions.
+* Save/load boat designs.
+* Different worlds or river themes with increasing difficulty.
+* Simple multiplayer option where friends can build and sail together.
+* Mobile-friendly UI with large buttons and intuitive controls.
+
+Technical requirements:
+
+* Build for Android and iOS.
+* Optimize performance for mid-range mobile devices.
+* Use touch controls for building, rotating, and deleting blocks.
+* Include a tutorial for new players.
+* Add satisfying sound effects, destruction sounds, water ambience, and progression feedback.
+
+The game should feel addictive, rewarding, and focused on creativity, experimentation, progression, and surviving longer with each new boat design.
