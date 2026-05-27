@@ -1,0 +1,127 @@
+Expand the game with deeper progression systems, social features, dynamic events, and more replayability to make the experience feel like a large-scale pirate survival sandbox adventure.
+
+Dynamic Ocean Events:
+
+* Add rare random world events during runs:
+
+  * Giant tsunami waves.
+  * Whirlpool zones that pull boats underwater.
+  * Pirate fleet ambushes.
+  * Treasure storms where coins appear in dangerous areas.
+  * Ghost ship encounters at night.
+  * Giant sea serpent sightings.
+  * Meteor showers crashing into the ocean.
+* Events should feel cinematic and unpredictable.
+
+Crew System:
+
+* Allow players to recruit pirate crew members.
+* Different crew types provide bonuses:
+
+  * Navigator = improves steering.
+  * Engineer = repairs blocks slowly during runs.
+  * Gunner = improves cannon accuracy.
+  * Merchant = increases coin rewards.
+  * Captain = boosts morale and movement speed.
+* Crew members can level up and unlock abilities.
+
+Boat Specialization:
+
+* Allow players to choose different ship styles:
+
+  * Fast lightweight speed boats.
+  * Heavy armored battleships.
+  * Balanced explorer ships.
+  * Flying balloon ships.
+  * Mechanical steam-powered ships.
+* Different designs create different gameplay strategies.
+
+Treasure and Exploration:
+
+* Add hidden islands with secret rewards.
+* Add underwater ruins containing rare materials.
+* Include treasure maps found during runs.
+* Add secret legendary ship parts hidden in dangerous areas.
+
+Advanced Building Features:
+
+* Add movable ship parts:
+
+  * Rotating cannons.
+  * Hinged doors.
+  * Mechanical bridges.
+  * Adjustable sails.
+  * Deployable anchors.
+* Add logic systems for advanced players:
+
+  * Switches.
+  * Triggers.
+  * Auto-repair systems.
+  * Trap defenses.
+
+Weather System:
+
+* Add dynamic day/night cycles.
+* Add weather conditions:
+
+  * Heavy rain.
+  * Dense fog.
+  * Thunderstorms.
+  * Heat waves.
+  * Blizzard conditions.
+* Weather affects visibility, water physics, and enemy behavior.
+
+Enemy Variety:
+
+* Add biome-specific enemies:
+
+  * Swamp crocodiles.
+  * Lava golems.
+  * Ice pirates.
+  * Ghost captains.
+  * Flying sea monsters.
+  * Exploding jellyfish.
+* Enemies should attack the boat differently depending on their type.
+
+Boss Battles:
+
+* Add major bosses every few biomes:
+
+  * Giant mechanical pirate ship.
+  * Sea dragon.
+  * Haunted ghost galleon.
+  * Volcanic titan.
+  * Ice leviathan.
+  * Kraken final boss.
+* Bosses should have cinematic introductions and multiple attack phases.
+
+Social and Multiplayer Features:
+
+* Add online co-op for up to 4 players.
+* Players can combine ships into giant constructions.
+* Add player trading for materials and cosmetics.
+* Add global leaderboards for longest survival distance and fastest treasure completion.
+
+Customization:
+
+* Add customizable pirate flags.
+* Add paint systems for ships.
+* Add emotes and pirate dances.
+* Add pets like parrots, monkeys, and mini sea creatures.
+
+Progression and Endgame:
+
+* Add prestige/rebirth system after reaching max level.
+* Add legendary materials only available in endgame zones.
+* Add seasonal events and limited-time cosmetics.
+* Add extremely difficult “Nightmare Seas” mode for advanced players.
+
+Visual and Audio Improvements:
+
+* Add cinematic water effects and dynamic waves.
+* Add satisfying destruction effects with wood splinters and explosions.
+* Add immersive pirate soundtrack that changes depending on danger level.
+* Add sea ambience with thunder, birds, wind, and creaking ships.
+
+Overall Vision:
+The game should evolve into a highly replayable pirate sandbox survival game where creativity, exploration, progression, physics, and unpredictable adventures constantly create memorable moments for players.

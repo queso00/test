@@ -2,9 +2,10 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
 
 import type { BlockType } from '@/constants/blocks';
+import type { CrewRole } from '@/constants/crew';
 import { getLevelFromXp, getLevelReward, MAX_LEVEL, xpForRun } from '@/constants/progression';
 
-const STORAGE_KEY = 'boat_game_v3';
+const STORAGE_KEY = 'boat_game_v4';
 
 export interface SavedDesign {
   id: string;
@@ -20,6 +21,7 @@ interface GameState {
   totalXp: number;
   unlockedBlocks: BlockType[];
   blockInventory: BlockInventory;
+  ownedCrew: CrewRole[];
   bestDistance: number;
   savedDesigns: SavedDesign[];
   totalRuns: number;
@@ -34,22 +36,23 @@ interface GameContextValue extends GameState {
   placeBlock: (type: BlockType) => boolean;
   returnBlock: (type: BlockType) => void;
   buyBlockPack: (type: BlockType, qty: number, cost: number) => boolean;
+  hireCrew: (role: CrewRole, cost: number) => boolean;
   updateBestDistance: (distance: number) => void;
   saveDesign: (name: string, grid: (BlockType | null)[][]) => void;
   deleteDesign: (id: string) => void;
   finishRun: (
     distance: number,
-    survivingBlocks: number
+    survivingBlocks: number,
+    hasMerchant: boolean
   ) => { coinsEarned: number; xpEarned: number; leveledUp: boolean; newLevel: number; levelReward: string };
 }
-
-const DEFAULT_INVENTORY: BlockInventory = { wood: 20 };
 
 const DEFAULT_STATE: GameState = {
   coins: 200,
   totalXp: 0,
   unlockedBlocks: ['wood'],
-  blockInventory: DEFAULT_INVENTORY,
+  blockInventory: { wood: 20 },
+  ownedCrew: [],
   bestDistance: 0,
   savedDesigns: [],
   totalRuns: 0,
@@ -87,11 +90,7 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
     setState((prev) => {
       if (prev.coins >= cost && !prev.unlockedBlocks.includes(type)) {
         success = true;
-        return {
-          ...prev,
-          coins: prev.coins - cost,
-          unlockedBlocks: [...prev.unlockedBlocks, type],
-        };
+        return { ...prev, coins: prev.coins - cost, unlockedBlocks: [...prev.unlockedBlocks, type] };
       }
       return prev;
     });
@@ -104,10 +103,7 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
       const current = prev.blockInventory[type] ?? 0;
       if (current > 0) {
         success = true;
-        return {
-          ...prev,
-          blockInventory: { ...prev.blockInventory, [type]: current - 1 },
-        };
+        return { ...prev, blockInventory: { ...prev.blockInventory, [type]: current - 1 } };
       }
       return prev;
     });
@@ -117,10 +113,7 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
   const returnBlock = useCallback((type: BlockType) => {
     setState((prev) => ({
       ...prev,
-      blockInventory: {
-        ...prev.blockInventory,
-        [type]: (prev.blockInventory[type] ?? 0) + 1,
-      },
+      blockInventory: { ...prev.blockInventory, [type]: (prev.blockInventory[type] ?? 0) + 1 },
     }));
   }, []);
 
@@ -132,10 +125,7 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
         return {
           ...prev,
           coins: prev.coins - cost,
-          blockInventory: {
-            ...prev.blockInventory,
-            [type]: (prev.blockInventory[type] ?? 0) + qty,
-          },
+          blockInventory: { ...prev.blockInventory, [type]: (prev.blockInventory[type] ?? 0) + qty },
         };
       }
       return prev;
@@ -143,34 +133,38 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
     return success;
   }, []);
 
+  const hireCrew = useCallback((role: CrewRole, cost: number): boolean => {
+    let success = false;
+    setState((prev) => {
+      if (prev.coins >= cost && !prev.ownedCrew.includes(role)) {
+        success = true;
+        return { ...prev, coins: prev.coins - cost, ownedCrew: [...prev.ownedCrew, role] };
+      }
+      return prev;
+    });
+    return success;
+  }, []);
+
   const updateBestDistance = useCallback((distance: number) => {
-    setState((prev) => ({
-      ...prev,
-      bestDistance: Math.max(prev.bestDistance, Math.floor(distance)),
-    }));
+    setState((prev) => ({ ...prev, bestDistance: Math.max(prev.bestDistance, Math.floor(distance)) }));
   }, []);
 
   const saveDesign = useCallback((name: string, grid: (BlockType | null)[][]) => {
     const id = Date.now().toString() + Math.random().toString(36).substr(2, 9);
     setState((prev) => ({
       ...prev,
-      savedDesigns: [
-        { id, name, grid, createdAt: Date.now() },
-        ...prev.savedDesigns,
-      ].slice(0, 15),
+      savedDesigns: [{ id, name, grid, createdAt: Date.now() }, ...prev.savedDesigns].slice(0, 15),
     }));
   }, []);
 
   const deleteDesign = useCallback((id: string) => {
-    setState((prev) => ({
-      ...prev,
-      savedDesigns: prev.savedDesigns.filter((d) => d.id !== id),
-    }));
+    setState((prev) => ({ ...prev, savedDesigns: prev.savedDesigns.filter((d) => d.id !== id) }));
   }, []);
 
   const finishRun = useCallback(
-    (distance: number, survivingBlocks: number) => {
-      const coinsEarned = Math.floor(distance / 6);
+    (distance: number, survivingBlocks: number, hasMerchant: boolean) => {
+      const baseCoinRate = hasMerchant ? 1.6 : 1.0;
+      const coinsEarned = Math.floor((distance / 6) * baseCoinRate);
       const xpEarned = xpForRun(distance, survivingBlocks);
       let leveledUp = false;
       let newLevel = 1;
@@ -185,7 +179,6 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
           newLevel = level;
           const reward = getLevelReward(level);
           levelReward = reward.message;
-          // Give bonus wood pack on level up
           const bonusWood = Math.floor(level / 2) + 5;
           return {
             ...prev,
@@ -193,10 +186,7 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
             totalXp: newXp,
             totalRuns: prev.totalRuns + 1,
             bestDistance: Math.max(prev.bestDistance, Math.floor(distance)),
-            blockInventory: {
-              ...prev.blockInventory,
-              wood: (prev.blockInventory.wood ?? 0) + bonusWood,
-            },
+            blockInventory: { ...prev.blockInventory, wood: (prev.blockInventory.wood ?? 0) + bonusWood },
           };
         }
         return {
@@ -229,6 +219,7 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
         placeBlock,
         returnBlock,
         buyBlockPack,
+        hireCrew,
         updateBestDistance,
         saveDesign,
         deleteDesign,

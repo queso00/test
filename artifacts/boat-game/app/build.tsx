@@ -38,15 +38,18 @@ function createEmptyGrid(): (BlockType | null)[][] {
 
 function GridCell({
   type,
+  ghostType,
   onPress,
   onLongPress,
 }: {
   type: BlockType | null;
+  ghostType?: BlockType | null;
   onPress: () => void;
   onLongPress: () => void;
 }) {
   const scaleAnim = useRef(new Animated.Value(1)).current;
   const def = type ? BLOCK_DEFS[type] : null;
+  const ghostDef = (!def && ghostType) ? BLOCK_DEFS[ghostType] : null;
 
   const handlePress = () => {
     Animated.sequence([
@@ -65,7 +68,7 @@ function GridCell({
             width: BLOCK_SIZE,
             height: BLOCK_SIZE,
             backgroundColor: def ? def.color : '#0B1627',
-            borderColor: def ? def.borderColor + '99' : '#1A2F47',
+            borderColor: def ? def.borderColor + '99' : ghostDef ? ghostDef.borderColor + '44' : '#1A2F47',
             transform: [{ scale: scaleAnim }],
           },
         ]}
@@ -76,7 +79,15 @@ function GridCell({
             <View style={[styles.cellDark, { backgroundColor: def.darkColor + 'BB' }]} />
           </>
         )}
-        {!def && <Ionicons name="add-outline" size={15} color="#1A2F47" />}
+        {ghostDef && (
+          <View style={[StyleSheet.absoluteFillObject, { backgroundColor: ghostDef.color, opacity: 0.18, borderRadius: 6 }]} />
+        )}
+        {!def && !ghostDef && <Ionicons name="add-outline" size={15} color="#1A2F47" />}
+        {!def && ghostDef && (
+          <View style={{ alignItems: 'center', justifyContent: 'center', flex: 1, opacity: 0.45 }}>
+            <View style={{ width: 10, height: 10, borderRadius: 3, backgroundColor: ghostDef.color }} />
+          </View>
+        )}
       </Animated.View>
     </Pressable>
   );
@@ -210,6 +221,7 @@ export default function BuildScreen() {
     [0, 1, 2].map(() => createEmptyGrid())
   );
   const [selected, setSelected] = useState<BlockType>('wood');
+  const [showGhost, setShowGhost] = useState(true);
   const [showSaveModal, setShowSaveModal] = useState(false);
   const [designName, setDesignName] = useState('My Ship');
 
@@ -426,16 +438,25 @@ export default function BuildScreen() {
         })}
       </View>
 
-      {/* Hint */}
+      {/* Hint + Ghost toggle */}
       <View style={styles.hintRow}>
         <Ionicons name="finger-print" size={12} color="#1E3A5F" />
         <Text style={styles.hintTxt}>Tap to place</Text>
         <Text style={styles.hintDot}>·</Text>
         <Ionicons name="hand-left-outline" size={12} color="#1E3A5F" />
         <Text style={styles.hintTxt}>Hold to remove</Text>
-        <Text style={styles.hintDot}>·</Text>
-        <Ionicons name="swap-horizontal-outline" size={12} color="#1E3A5F" />
-        <Text style={styles.hintTxt}>Scroll to pan</Text>
+        <View style={{ flex: 1 }} />
+        {activeDeck > 0 && (
+          <Pressable
+            onPress={() => { Haptics.selectionAsync(); setShowGhost((v) => !v); }}
+            style={[styles.ghostToggle, showGhost && styles.ghostToggleOn]}
+          >
+            <Ionicons name="layers-outline" size={12} color={showGhost ? '#22D3EE' : '#334155'} />
+            <Text style={[styles.ghostToggleTxt, showGhost && { color: '#22D3EE' }]}>
+              {showGhost ? 'Ghost ON' : 'Ghost OFF'}
+            </Text>
+          </Pressable>
+        )}
       </View>
 
       {/* Grid */}
@@ -445,20 +466,26 @@ export default function BuildScreen() {
             <View style={styles.gridInner}>
               {layers[activeDeck].map((row, r) => (
                 <View key={r} style={styles.gridRow}>
-                  {row.map((cell, c) => (
-                    <GridCell
-                      key={c}
-                      type={cell}
-                      onPress={() => place(r, c)}
-                      onLongPress={() => remove(r, c)}
-                    />
-                  ))}
+                  {row.map((cell, c) => {
+                    const ghostType = (showGhost && activeDeck > 0)
+                      ? ((activeDeck > 1 ? layers[1][r]?.[c] : null) || layers[0][r]?.[c] || null)
+                      : null;
+                    return (
+                      <GridCell
+                        key={c}
+                        type={cell}
+                        ghostType={ghostType}
+                        onPress={() => place(r, c)}
+                        onLongPress={() => remove(r, c)}
+                      />
+                    );
+                  })}
                 </View>
               ))}
             </View>
           </ScrollView>
         </ScrollView>
-        <Text style={styles.gridLabel}>{DECK_EMOJIS[activeDeck]} {DECK_LABELS[activeDeck].toUpperCase()}</Text>
+        <Text style={styles.gridLabel}>{DECK_EMOJIS[activeDeck]} {DECK_LABELS[activeDeck].toUpperCase()}{activeDeck > 0 && showGhost ? '  ·  👁 ghost view' : ''}</Text>
       </View>
 
       {/* Selected block info */}
@@ -599,11 +626,18 @@ const styles = StyleSheet.create({
   },
   deckCountTxt: { color: '#60A5FA', fontFamily: 'Inter_700Bold', fontSize: 10 },
   hintRow: {
-    flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
-    gap: 4, paddingBottom: 4,
+    flexDirection: 'row', alignItems: 'center',
+    gap: 4, paddingBottom: 4, paddingHorizontal: 14,
   },
   hintTxt: { color: '#1E3A5F', fontFamily: 'Inter_400Regular', fontSize: 10 },
   hintDot: { color: '#1E3A5F', fontSize: 12, lineHeight: 14 },
+  ghostToggle: {
+    flexDirection: 'row', alignItems: 'center', gap: 3,
+    paddingHorizontal: 8, paddingVertical: 4, borderRadius: 10,
+    backgroundColor: '#0B1627', borderWidth: 1, borderColor: '#1A2F47',
+  },
+  ghostToggleOn: { borderColor: '#22D3EE44', backgroundColor: '#0B1E2A' },
+  ghostToggleTxt: { color: '#334155', fontFamily: 'Inter_600SemiBold', fontSize: 10 },
   gridOuter: { alignItems: 'center', flex: 1 },
   gridInner: {
     gap: 3, padding: 10, backgroundColor: '#060F1C',
